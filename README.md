@@ -17,7 +17,8 @@ In this Section we are implementing Convolution Neural Network(CNN) Classifier f
 * Pandas
 * Numpy
 
-Install dependencies using [conda](https://conda.io/docs/)
+Install dependencies in system using (pip install 'dependecies name')
+we are using jupyter notebook
 
 #### Test Train Split
 Image training set contain 12500 images for each category. I split those into 80% train and 20% means test Split each class images into 10,000 for train and 2,500 for test. 
