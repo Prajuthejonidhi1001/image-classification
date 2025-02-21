@@ -28,12 +28,11 @@ Image training set contain 12500 images for each category. I split those into 80
 
 
 ```python
+import numpy as np
+import random
+import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.layers import MaxPooling2D
-from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.layers import Conv2D,MaxPooling2D,Dense,Flatten
 ```
 
 
