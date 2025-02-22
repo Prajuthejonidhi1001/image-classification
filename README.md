@@ -35,12 +35,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D,MaxPooling2D,Dense,Flatten
 ```
 
-
-```python
-from warnings import filterwarnings
-filterwarnings('ignore')
-```
-
 Network Parameter:
 * Rectifier Linear Unit 
 * Adam optimizer
@@ -70,31 +64,13 @@ Using some Data Augmentation techniques for more data and Better results.
 
 
 ```python
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-train_datagen = ImageDataGenerator(rescale=1./255,
-                                   shear_range=0.1,
-                                   zoom_range=0.1,
-                                   horizontal_flip=True)
-test_datagen = ImageDataGenerator(rescale=1./255)
+train_datagen = ImageDataGenerator(
+    shear_range=0.2,   # Shearing effect
+    zoom_range=0.2,    # Random zoom
+    horizontal_flip=True  # Flip images horizontally
+)
 
-#Training Set
-train_set = train_datagen.flow_from_directory('train',
-                                             target_size=(64,64),
-                                             batch_size=32,
-                                             class_mode='binary')
-#Validation Set
-test_set = test_datagen.flow_from_directory('test',
-                                           target_size=(64,64),
-                                           batch_size = 32,
-                                           class_mode='binary',
-                                           shuffle=False)
-#Test Set /no output available
-test_set1 = test_datagen.flow_from_directory('test1',
-                                            target_size=(64,64),
-                                            batch_size=32,
-                                            shuffle=False)
-
-
+train_generator = train_datagen.flow(X_train, Y_train, batch_size=32)
 ```
 
     Found 19998 images belonging to 2 classes.
