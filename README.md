@@ -137,7 +137,7 @@ plt.show()
 ```
 
 
-![image](random image.png)
+![image](randomimage.png).
 
 
 
