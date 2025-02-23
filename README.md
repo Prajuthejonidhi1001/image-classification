@@ -250,6 +250,8 @@ print('our model recognize it as',pred)
 
 
 
+### Model Accuracy
+
 ```python
 %%capture
 # Model Accuracy
