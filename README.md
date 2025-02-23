@@ -137,7 +137,7 @@ plt.show()
 ```
 
 
-![image](resources/images/architecture.jpg)
+![image](random image)
 
 
 
