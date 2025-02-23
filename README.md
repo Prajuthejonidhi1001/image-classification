@@ -222,10 +222,10 @@ plt.show()
 ```
 
 
-image
+![image](trainingaccuracy.png).
 
 
-`
+
 
 ### Prediction of Image
 
@@ -246,7 +246,7 @@ print('our model recognize it as',pred)
 ```
 
 
-![png](resources/images/output_10_0.png)
+![png](outputimage.png)
 
 
 
