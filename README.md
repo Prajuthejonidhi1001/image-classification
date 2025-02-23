@@ -34,6 +34,15 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D,MaxPooling2D,Dense,Flatten
 ```
+### Load Dataset
+
+```python
+X_train = np.loadtxt('input.csv',delimiter = ',')
+Y_train = np.loadtxt('labels.csv',delimiter = ',')
+
+X_test = np.loadtxt('input_test.csv',delimiter = ',')
+Y_test = np.loadtxt('labels_test.csv',delimiter = ',')
+```
 
 Network Parameter:
 * Rectifier Linear Unit 
