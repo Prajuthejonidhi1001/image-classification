@@ -44,6 +44,104 @@ X_test = np.loadtxt('input_test.csv',delimiter = ',')
 Y_test = np.loadtxt('labels_test.csv',delimiter = ',')
 ```
 
+### Reshape of Dataset
+
+```python
+X_train = X_train.reshape(len(X_train),100,100,3)
+Y_train = Y_train.reshape(len(Y_train),1)
+
+X_test = X_test.reshape(len(X_test),100,100,3)
+Y_test = Y_test.reshape(len(Y_test),1)
+
+X_train = X_train/255.0
+X_test = X_test/255.0
+```
+
+```python
+X_train[1,:]
+```
+
+```
+array([[[0.51372549, 0.50196078, 0.52941176],
+        [0.62745098, 0.61568627, 0.64313725],
+        [0.77647059, 0.75294118, 0.8       ],
+        ...,
+        [0.98039216, 0.97647059, 0.96862745],
+        [1.        , 1.        , 0.99215686],
+        [0.98039216, 0.97647059, 0.96078431]],
+
+       [[0.54901961, 0.5372549 , 0.56470588],
+        [0.49803922, 0.48627451, 0.51372549],
+        [0.47058824, 0.44705882, 0.48627451],
+        ...,
+        [0.98431373, 0.99215686, 0.98823529],
+        [0.99607843, 1.        , 0.99215686],
+        [0.99607843, 1.        , 0.98431373]],
+
+       [[0.8       , 0.79215686, 0.81176471],
+        [0.73333333, 0.7254902 , 0.74509804],
+        [0.57647059, 0.55686275, 0.58039216],
+        ...,
+        [0.97647059, 1.        , 1.        ],
+        [0.93333333, 0.96862745, 0.94901961],
+        [0.90980392, 0.94509804, 0.9254902 ]],
+
+       ...,
+
+       [[0.68235294, 0.71372549, 0.76470588],
+        [0.6745098 , 0.70588235, 0.75686275],
+        [0.69803922, 0.72941176, 0.77254902],
+        ...,
+        [0.34117647, 0.44705882, 0.38039216],
+        [0.29411765, 0.38823529, 0.3254902 ],
+        [0.31372549, 0.41176471, 0.3372549 ]],
+
+       [[0.65098039, 0.67843137, 0.74117647],
+        [0.64313725, 0.6745098 , 0.7254902 ],
+        [0.6745098 , 0.70588235, 0.75686275],
+        ...,
+        [0.30588235, 0.41568627, 0.32941176],
+        [0.28235294, 0.38039216, 0.29803922],
+        [0.30196078, 0.4       , 0.31764706]],
+
+       [[0.67843137, 0.70588235, 0.76862745],
+        [0.6745098 , 0.70196078, 0.76470588],
+        [0.68235294, 0.71372549, 0.76470588],
+        ...,
+        [0.24705882, 0.35686275, 0.27058824],
+        [0.24313725, 0.34117647, 0.25490196],
+        [0.27843137, 0.37647059, 0.29019608]]])
+```
+
+Shape of Dataset
+
+```python
+print("Shape of X_train:", X_train.shape)
+print("Shape of Y_train:", Y_train.shape)
+print("Shape of X_test:", X_test.shape)
+print("Shape of Y_test:", Y_test.shape)
+```
+
+```
+Shape of X_train: (2000, 100, 100, 3)
+Shape of Y_train: (2000, 1)
+Shape of X_test: (400, 100, 100, 3)
+Shape of Y_test: (400, 1)
+```
+## Random image generation
+
+```python
+idx = random.randint(0, len(X_train))
+plt.imshow(X_train[idx, :])
+plt.show()
+```
+
+
+![image](resources/images/architecture.jpg)
+
+
+
+
 Network Parameter:
 * Rectifier Linear Unit 
 * Adam optimizer
@@ -52,17 +150,21 @@ Network Parameter:
 
 
 ```python
-classifier = Sequential()
-classifier.add(Conv2D(32,(3,3),input_shape=(64,64,3),activation = 'relu'))
-classifier.add(MaxPooling2D(pool_size=(2,2),strides=2)) #if stride not given it equal to pool filter size
-classifier.add(Conv2D(32,(3,3),activation = 'relu'))
-classifier.add(MaxPooling2D(pool_size=(2,2),strides=2))
-classifier.add(Flatten())
-classifier.add(Dense(units=128,activation='relu'))
-classifier.add(Dense(units=1,activation='sigmoid'))
-adam = tensorflow.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-classifier.compile(optimizer=adam,loss='binary_crossentropy',metrics=['accuracy'])
-#tensorboard = TensorBoard(log_dir="logs/{}".format(time()))
+model = Sequential([
+    Conv2D(32, (3,3), activation='relu', input_shape=(100,100,3), name='conv2d_4'),
+    MaxPooling2D((2,2), name='max_pooling2d_4'),
+    
+    Conv2D(32, (3,3), activation='relu', name='conv2d_5'),
+    MaxPooling2D((2,2), name='max_pooling2d_5'),
+    
+    Flatten(name='flatten_2'),
+    Dense(64, activation='relu', name='dense_4'),
+    Dense(1, activation='sigmoid', name='dense_5')
+])
+```
+
+```python
+model.compile(loss = 'binary_crossentropy', optimizer = 'adam',metrics = ['accuracy'])
 ```
 
 ## Data Augmentation
@@ -73,90 +175,74 @@ Using some Data Augmentation techniques for more data and Better results.
 
 
 ```python
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-train_datagen = ImageDataGenerator(rescale=1./255,
-                                   shear_range=0.1,
-                                   zoom_range=0.1,
-                                   horizontal_flip=True)
-test_datagen = ImageDataGenerator(rescale=1./255)
+train_datagen = ImageDataGenerator(
+    shear_range=0.2,   # Shearing effect
+    zoom_range=0.2,    # Random zoom
+    horizontal_flip=True  # Flip images horizontally
+)
 
-#Training Set
-train_set = train_datagen.flow_from_directory('train',
-                                             target_size=(64,64),
-                                             batch_size=32,
-                                             class_mode='binary')
-#Validation Set
-test_set = test_datagen.flow_from_directory('test',
-                                           target_size=(64,64),
-                                           batch_size = 32,
-                                           class_mode='binary',
-                                           shuffle=False)
-#Test Set /no output available
-test_set1 = test_datagen.flow_from_directory('test1',
-                                            target_size=(64,64),
-                                            batch_size=32,
-                                            shuffle=False)
-
-
+train_generator = train_datagen.flow(X_train, Y_train, batch_size=32)
+```
+## Training the Model
+```python
+history = model.fit(X_train, Y_train,epochs = 5,batch_size = 64, validation_data=(X_test, Y_test))
 ```
 
-    Found 19998 images belonging to 2 classes.
-    Found 5000 images belonging to 2 classes.
-    Found 12500 images belonging to 1 classes.
-
-
+```
+Epoch 1/5
+32/32 ━━━━━━━━━━━━━━━━━━━━ 8s 199ms/step - accuracy: 0.4848 - loss: 0.8049 - val_accuracy: 0.5375 - val_loss: 0.6918
+Epoch 2/5
+32/32 ━━━━━━━━━━━━━━━━━━━━ 6s 179ms/step - accuracy: 0.5394 - loss: 0.6884 - val_accuracy: 0.6025 - val_loss: 0.6615
+Epoch 3/5
+32/32 ━━━━━━━━━━━━━━━━━━━━ 5s 166ms/step - accuracy: 0.6184 - loss: 0.6587 - val_accuracy: 0.6900 - val_loss: 0.6465
+Epoch 4/5
+32/32 ━━━━━━━━━━━━━━━━━━━━ 6s 183ms/step - accuracy: 0.7057 - loss: 0.6033 - val_accuracy: 0.7050 - val_loss: 0.5902
+Epoch 5/5
+32/32 ━━━━━━━━━━━━━━━━━━━━ 6s 182ms/step - accuracy: 0.7404 - loss: 0.5317 - val_accuracy: 0.7050 - val_loss: 0.5666
+```
 
 ```python
-%%capture
-classifier.fit_generator(train_set,
-                        steps_per_epoch=800, 
-                        epochs = 200,
-                        validation_data = test_set,
-                        validation_steps = 20, 
-                        #callbacks=[tensorboard]
-                        );
+model.evaluate(X_test,Y_test)
+```
 
-#Some Helpful Instructions:
+```
+13/13 ━━━━━━━━━━━━━━━━━━━━ 0s 25ms/step - accuracy: 0.6669 - loss: 0.6093
+[0.566556990146637, 0.7049999833106995]
+```
+## Training and Validation Accuracy
 
-#finetune you network parameter in last by using low learning rate like 0.00001
-#classifier.save('resources/dogcat_model_bak.h5')
-#from tensorflow.keras.models import load_model
-#model = load_model('partial_trained1')
-#100 iteration with learning rate 0.001 and after that 0.0001
+```python
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.title('Training & Validation Accuracy')
+plt.legend()
+plt.show()
 ```
 
 
+image
+
+
+`
+
+### Prediction of Image
+
+
 ```python
-from tensorflow.keras.models import load_model
-classifier = load_model('resources/dogcat_model_bak.h5')
-```
-
-### Prediction of Single Image
-
-
-```python
-#Prediction of image
-%matplotlib inline
-import tensorflow
-from tensorflow.keras.preprocessing import image
-import matplotlib.pyplot as plt
-import numpy as np
-img1 = image.load_img('test/Cat/10.jpg', target_size=(64, 64))
-img = image.img_to_array(img1)
-img = img/255
-# create a batch of size 1 [N,H,W,C]
-img = np.expand_dims(img, axis=0)
-prediction = classifier.predict(img, batch_size=None,steps=1) #gives all class prob.
-if(prediction[:,:]>0.5):
-    value ='Dog :%1.2f'%(prediction[0,0])
-    plt.text(20, 62,value,color='red',fontsize=18,bbox=dict(facecolor='white',alpha=0.8))
-else:
-    value ='Cat :%1.2f'%(1.0-prediction[0,0])
-    plt.text(20, 62,value,color='red',fontsize=18,bbox=dict(facecolor='white',alpha=0.8))
-
-plt.imshow(img1)
+idx2 = random.randint(0, len(Y_test))
+plt.imshow(X_test[idx2, :])
 plt.show()
 
+y_pred = model.predict(X_test[idx2, :].reshape(1,100,100,3))
+y_pred = y_pred >0.5
+
+if(y_pred == 0):
+    pred = 'dog'
+else:
+    pred = 'cat'
+print('our model recognize it as',pred)
 ```
 
 
